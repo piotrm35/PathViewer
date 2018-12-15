@@ -1,0 +1,7 @@
+var map_of_work_val = {
+"type": "FeatureCollection",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "name": "test 2", "cmt": null, "desc": "test", "src": null, "link1_href": null, "link1_text": null, "link1_type": null, "link2_href": null, "link2_text": null, "link2_type": null, "number": null, "type": null }, "geometry": { "type": "LineString", "coordinates": [ [ 20.493167325727999, 53.777159267635 ], [ 20.493658724793999, 53.777052480088997 ], [ 20.494190717258999, 53.776626528282002 ], [ 20.492767202787, 53.776809211813003 ], [ 20.492544125948999, 53.777018737726003 ], [ 20.493167325727999, 53.777159267635 ] ] } }
+]
+}

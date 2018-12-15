@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8" />
+		<!--
+		author: Piotr Michałowski, Olsztyn, woj. W-M, Poland
+		piotrm35@hotmail.com
+		license: GPL v. 2.0
+		11.2018
+		-->
+		<title>my_PathViewer_light_0.3</title>
+		<link rel="stylesheet" href="./OL/ol.css" type="text/css">
+		<script src="./OL/ol.js"></script>
+		<style>
+			html, body
+			{
+				height: 100%;
+				margin: 0;
+			}
+			#map
+			{
+				height: 100%;
+			}
+		</style>
+		<script src="./PathViewer_library.js"></script>
+	</head>
+
+	<body onload="init()">
+		<div id="map"></div>
+		<script src="./map_of_work.geojson" type="text/javascript"></script>
+		<script src="./map_background.geojson" type="text/javascript"></script>
+		<script type="text/javascript">
+			function init()
+			{
+				var start_point;
+				try
+				{
+					start_point =  map_of_work_val["features"][0]["geometry"]["coordinates"][0];
+				}
+				catch (err)
+				{
+					start_point = [0.0, 0.0];
+				}
+				pvl_map = new ol.Map
+				({
+					target: 'map',
+					view: new ol.View
+					({
+						center: ol.proj.fromLonLat(start_point),
+						rotation: 0,
+						zoom: 16
+					})
+				});
+
+				var map_background_style_a = pvl_get_line_style('#000000', 2);
+				var map_background_style_b = pvl_get_line_style('#000000', 4);
+				var map_background_layer;
+				try
+				{
+					map_background_layer = new ol.layer.Vector
+					({
+						source: new ol.source.Vector({features: pvl_my_format.readFeatures(map_background_val)}),
+						style: map_background_style_b
+					});
+					pvl_map.addLayer(map_background_layer);
+				}
+				catch (err)
+				{
+					map_background_layer = null;
+					alert("map_background.geojson file ERROR.");
+				}
+				
+				var map_of_work_style_a = pvl_get_line_style('#FF0000', 7);
+				var map_of_work_style_b = pvl_get_line_style('#FF0000', 14);
+				var map_of_work_layer;
+				try
+				{
+					map_of_work_layer = new ol.layer.Vector
+					({
+						source: new ol.source.Vector({features: pvl_my_format.readFeatures(map_of_work_val)}),
+						style: map_of_work_style_b
+					});
+					pvl_map.addLayer(map_of_work_layer);
+				}
+				catch (err)
+				{
+					map_of_work_layer = null;
+					alert("map_of_work.geojson file ERROR.");
+				}
+				
+				var path_style_a = pvl_get_line_style('#0000FF', 7);
+				var path_style_b = pvl_get_line_style('#0000FF', 14);
+				var path_layer = new ol.layer.Vector({source: new ol.source.Vector({features: [pvl_path_feature]}),style: path_style_b});
+				pvl_map.addLayer(path_layer);
+				
+				var marker_style =  pvl_get_point_circle_style('#0000FF', 10); 
+				var marker_layer = new ol.layer.Vector({source: new ol.source.Vector({features: [pvl_marker_feature]}), style : marker_style});
+				pvl_map.addLayer(marker_layer);
+				
+				pvl_map.getView().on('change:resolution', function(e)
+				{
+					if (pvl_map.getView().getZoom() > 15)
+					{
+						path_layer.setStyle(path_style_b);
+						if (map_of_work_layer)
+						{
+							map_of_work_layer.setStyle(map_of_work_style_b);
+						}
+						if (map_background_layer)
+						{
+							map_background_layer.setStyle(map_background_style_b);
+						}
+					}
+					else
+					{
+						path_layer.setStyle(path_style_a);
+						if (map_of_work_layer)
+						{
+							map_of_work_layer.setStyle(map_of_work_style_a);
+						}
+						if (map_background_layer)
+						{
+							map_background_layer.setStyle(map_background_style_a);
+						}
+					}
+				});
+				
+				pvl_restore_lost_path();
+				pvl_geolocation_start();
+			}
+		</script>
+	</body>
+  
+</html>
