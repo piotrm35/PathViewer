@@ -11,12 +11,13 @@ work start date: 15.09.2018
 
 //-----------------------------------------------------------------------------------
 // public
-const pvl_VERSION = '1.2';
+const pvl_VERSION = '1.3';
 
 var pvl_map;
 var	pvl_path_feature = new ol.Feature({geometry: (new ol.geom.LineString([]))});
 var pvl_marker_feature = new ol.Feature();
 var pvl_my_format = new ol.format.GeoJSON({featureProjection:"EPSG:3857"});
+var	pvl_show_path = true;
 
 //-----------------------------------------------------------------------------------
 // private
@@ -74,29 +75,32 @@ function pvl_get_polygon_style(l_col, wdth, f_col)
 
 function pvl_restore_lost_path()	// restoring path lost after browser minimization
 {
-	var keys;
-	try
+	if (pvl_show_path)
 	{
-		keys = Object.keys(sessionStorage);
-	}
-	catch (err)
-	{
-		keys =  null;
-	}
-	if (keys)
-	{
-		var res, tmp_pos;
-		for (_sessionStorage_idx = 0; _sessionStorage_idx < keys.length; _sessionStorage_idx++)
+		var keys;
+		try
 		{
-			try
+			keys = Object.keys(sessionStorage);
+		}
+		catch (err)
+		{
+			keys =  null;
+		}
+		if (keys)
+		{
+			var res, tmp_pos;
+			for (_sessionStorage_idx = 0; _sessionStorage_idx < keys.length; _sessionStorage_idx++)
 			{
-				res = sessionStorage.getItem(_sessionStorage_idx.toString()).split(",");
-				tmp_pos = [parseFloat(res[0]), parseFloat(res[1])];
-				pvl_path_feature.getGeometry().appendCoordinate(tmp_pos);
-			}
-			catch (err)
-			{
-				continue;
+				try
+				{
+					res = sessionStorage.getItem(_sessionStorage_idx.toString()).split(",");
+					tmp_pos = [parseFloat(res[0]), parseFloat(res[1])];
+					pvl_path_feature.getGeometry().appendCoordinate(tmp_pos);
+				}
+				catch (err)
+				{
+					continue;
+				}
 			}
 		}
 	}
@@ -187,15 +191,18 @@ function _geolocation_on_change()
 	if (_geolocation.getAccuracy() <= _GEOLOCATION_ACCURACY_THRESHOLD)
 	{
 		var position = _geolocation.getPosition();
-		try
+		if (pvl_show_path)
 		{
-			sessionStorage.setItem(_sessionStorage_idx.toString(), position.toString());
-			_sessionStorage_idx++;
+			try
+			{
+				sessionStorage.setItem(_sessionStorage_idx.toString(), position.toString());
+				_sessionStorage_idx++;
+			}
+			catch (err)
+			{;}
+			pvl_path_feature.getGeometry().appendCoordinate(position);
 		}
-		catch (err)
-		{;}
 		pvl_marker_feature.setGeometry(new ol.geom.Point(position));
-		pvl_path_feature.getGeometry().appendCoordinate(position);
 		pvl_map.getView().animate({center: position, duration: 600});
 		var rot = _get_map_new_rotation(position);
 		if (rot)
