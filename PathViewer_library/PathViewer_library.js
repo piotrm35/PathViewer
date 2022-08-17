@@ -11,13 +11,14 @@ work start date: 15.09.2018
 
 //-----------------------------------------------------------------------------------
 // public
-const pvl_VERSION = '1.3';
+const pvl_VERSION = '1.4';
 
 var pvl_map;
 var	pvl_path_feature = new ol.Feature({geometry: (new ol.geom.LineString([]))});
 var pvl_marker_feature = new ol.Feature();
 var pvl_my_format = new ol.format.GeoJSON({featureProjection:"EPSG:3857"});
 var	pvl_show_path = true;
+var pvl_map_animation = true;
 
 //-----------------------------------------------------------------------------------
 // private
@@ -191,6 +192,7 @@ function _geolocation_on_change()
 	if (_geolocation.getAccuracy() <= _GEOLOCATION_ACCURACY_THRESHOLD)
 	{
 		var position = _geolocation.getPosition();
+		pvl_marker_feature.setGeometry(new ol.geom.Point(position));
 		if (pvl_show_path)
 		{
 			try
@@ -202,15 +204,18 @@ function _geolocation_on_change()
 			{;}
 			pvl_path_feature.getGeometry().appendCoordinate(position);
 		}
-		pvl_marker_feature.setGeometry(new ol.geom.Point(position));
-		pvl_map.getView().animate({center: position, duration: 600});
-		var rot = _get_map_new_rotation(position);
-		if (rot)
+		if (pvl_map_animation)
 		{
-			pvl_map.getView().animate({rotation: rot, duration: 600});
+			pvl_map.getView().animate({center: position, duration: 600});
+			var rot = _get_map_new_rotation(position);
+			if (rot)
+			{
+				pvl_map.getView().animate({rotation: rot, duration: 600});
+			}
 		}
 		if (!_last_position)
 		{
+			pvl_map.getView().animate({center: position, duration: 600});
 			pvl_map.getView().setZoom(18);
 		}
 		_last_position = position;
