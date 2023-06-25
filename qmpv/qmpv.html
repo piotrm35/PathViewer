@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8" />
+		<!--
+		author: Piotr Michałowski, Olsztyn, woj. W-M, Poland
+		piotrm35@hotmail.com
+		license: GPL v. 2.0
+		date: 16.06.2023
+		-->
+		<title>qmpv_6</title>
+		<link rel="icon" type="image/png" href="favicon.png">
+		<link rel="stylesheet" href="../OL/ol.css" type="text/css">
+		<style>
+			html, body
+			{
+				height: 100%;
+				margin: 0;
+			}
+			#map
+			{
+				height: 100%;
+			}
+			.map .ol-zoom
+			{
+				top: 10px;
+				left: auto;
+				right: 10px;
+			}
+			.menu_element
+			{
+				background-color: rgba(0,60,136,.5);
+				border: none;
+				color: white;
+				display: block;
+				position: absolute;
+				left: 10px;
+				z-index: 1;
+				font-size: 1.5em;
+				font-weight: 700;
+				text-decoration: none;
+			}
+			.menu_button
+			{
+				text-align: center;
+				height: 100px;
+				width: 300px;
+			}
+			#path_button
+			{
+				top: 10px;
+			}
+		</style>
+		<script src="../OL/ol.js" type="text/javascript"></script>
+		<script src="../local_data/Granice_Olsztyna.js" type="text/javascript"></script>
+		<script src="./js/PathViewer_library.js" type="text/javascript"></script>
+		<script src="./js/qmpv_6.a.js" type="text/javascript"></script>
+	</head>
+
+	<body onload="init()">
+		<div id="map" class="map">
+			<input type="button" id="path_button" class="menu_element menu_button" value="pokaż / ukryj ścieżkę" onclick="show_hide_path()" />
+		</div>
+	</body>
+  
+</html>
